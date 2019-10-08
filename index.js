@@ -1,28 +1,77 @@
 const puppeteer = require('puppeteer');
-
-(async () => {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    await page.goto('https://krasnodar.kerama-marazzi.com/ru/production/');
+const fs = require('fs');
 
 
-    let response = await page.$$('.image');
+ async function getArrayLink(page) {
+    const pretier = await page.$('.ptb-new-left-menu-firts');
+    const postsSelector = 'a';
+    await page.waitForSelector(postsSelector, { timeout: 0 });
+    return await pretier.$$eval( // запрос списка ссылок
+      postsSelector, postLinks => postLinks.map((link, arrayJson) => {
+        return link.href;
+        })
+    );
+}
+async function initPage(page, href) {
+    await page.goto
+}
 
-    let index = response.length
+
+(async () => { // 
     
-    const divsCounts = await page.$$eval('.image', divs => divs.length);
+    const browser = await puppeteer.launch({
+  		headless: true
+    });    
+    const page = await browser.newPage();
+    // await page.goto('https://krasnodar.kerama-marazzi.com/ru/production/');
+    await page.goto('https://krasnodar.kerama-marazzi.com/ru/production/section.php?SECTION_ID=6244');
+    
+    // await page.waitForSelector('.image-holder');
+    // let arrayLinkButton = await page.$$('.image-holder > a')
 
+    const testBut = await page.$$('.image-holder');
 
-
-    // 
-    // const html = await page.$eval('.main-container', e => e.outerHTML);
-    // for (; index--;) {
-    //     console.log(await response[index].getProperty('href')alue)
+    // for (const value of testBut) {
+    //     const a = 
+    //     console.log(a);
     // }
 
+
+    for (const value of testBut) {
+        
+        try{
+
+        const button=  await value.$('a')
+        await button.hover();
+        await button.click();
+        let test = await page.waitForSelector('#element-info', {visible: true});
+        let result =  await test.$eval('strong', el=> el.textContent);
+        console.log(result)
+        } catch(e){}
+    }
+    
+
+    // let a = 0;
+    // for (let elem of arrayLinkButton) {
+    //     console.log(elem);
+    //     await elem.click();
+    //     break;
+    //     // await elem.click();
+    //     // const pretier = await page.$('#element-info');
+    //     // const prop = await (await pretier.getProperty('cellpadding')).jsonValue();
+    //     // console.log(prop)
+    // }
+
+
+    // const postUrls = await getArrayLink(page);
+   
     await browser.close();
 })();
+
+
+// fs.writeFileSync("hello.json",  // запись в файл
+    //     JSON.stringify(postUrls
+    //         .filter(value => value.indexOf('section.php') + 1)))
 
 // downloads
 // var fs = require('fs'),
